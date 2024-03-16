@@ -1,49 +1,26 @@
-// index.js
-
 const { Client } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
-const readline = require('readline');
 
+// Cria um cliente WhatsApp
 const client = new Client();
 
+// Evento para receber o código QR e iniciar a sessão
 client.on('qr', (qr) => {
     console.log('Escaneie o QR Code usando o WhatsApp:');
     qrcode.generate(qr, { small: true });
 });
 
+// Evento para verificar quando o cliente está pronto
 client.on('ready', () => {
     console.log('Bot conectado!');
 });
 
+// Evento para receber mensagens
 client.on('message', async (message) => {
-    if (message.body.toLowerCase() === 'run.px') {
-        const numbers = await getInput('Digite os números dos participantes separados por vírgula: ');
-        const groupName = await getInput('Digite o nome do grupo: ');
-        const description = await getInput('Digite a descrição do grupo: ');
-
-        try {
-            const group = await client.createGroup(groupName, numbers.split(','), description);
-            console.log('Grupo criado:', group.id._serialized);
-            message.reply('Grupo criado com sucesso!');
-        } catch (error) {
-            console.error('Erro ao criar grupo:', error);
-            message.reply('Erro ao criar grupo.');
-        }
-    }
+    console.log('Nova mensagem recebida:', message.body);
+    // Envie uma resposta automática
+    await message.reply('Olá! Eu sou um bot de WhatsApp.');
 });
 
-function getInput(question) {
-    const rl = readline.createInterface({
-        input: process.stdin,
-        output: process.stdout
-    });
-
-    return new Promise((resolve) => {
-        rl.question(question, (answer) => {
-            rl.close();
-            resolve(answer);
-        });
-    });
-}
-
+// Inicializa o cliente WhatsApp
 client.initialize();
